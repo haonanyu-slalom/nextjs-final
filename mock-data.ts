@@ -8,7 +8,7 @@ interface Profile {
     description: string;
     techStacks: string[];
     experience: number;
-    availability: Availability;
+    availability: boolean;
     project: Project | null;
     githubLink: Url;
 }
@@ -17,8 +17,6 @@ interface Project {
     title: String;
     description: String;
 }
-
-enum Availability { Occupied = 0, Available = 1 }
 
 const mockProfiles: Profile[] = [
     {
@@ -29,7 +27,7 @@ const mockProfiles: Profile[] = [
         description: 'Frontend engineer specializing in React and TypeScript.',
         techStacks: ['React', 'TypeScript', 'JavaScript'],
         experience: 5,
-        availability: Availability.Available,
+        availability: true,
         project: null,
         githubLink: 'https://githubLink.com/alicejohnson'
     },
@@ -41,7 +39,7 @@ const mockProfiles: Profile[] = [
         description: 'Backend developer with expertise in Node.js and Python.',
         techStacks: ['Node.js', 'Python'],
         experience: 8,
-        availability: Availability.Occupied,
+        availability: false,
         project: { title: 'Project A', description: 'Insurance Portal for Company A'},
         githubLink: 'https://githubLink.com/bobsmith'
     },
@@ -53,7 +51,7 @@ const mockProfiles: Profile[] = [
         description: 'Full-stack engineer with a focus on MERN stack.',
         techStacks: ['MongoDB', 'Python', 'Java', 'React', 'Node.js'],
         experience: 6,
-        availability: Availability.Available,
+        availability: true,
         project: null,
         githubLink: 'https://githubLink.com/charliebrown'
     },
@@ -65,7 +63,7 @@ const mockProfiles: Profile[] = [
         description: 'Backend engineer specialized in C++ and Python architectures.',
         techStacks: ['C++', 'Python'],
         experience: 10,
-        availability: Availability.Occupied,
+        availability: false,
         project: { title: 'Project D', description: 'Public transport tracker for Company D'},
         githubLink: 'https://githubLink.com/dianaprince'
     },
@@ -77,7 +75,7 @@ const mockProfiles: Profile[] = [
         description: 'Software engineer with Python and AI technologies.',
         techStacks: ['Python', 'Langchain', 'Langgraph'],
         experience: 4,
-        availability: Availability.Available,
+        availability: true,
         project: null,
         githubLink: 'https://githubLink.com/eveadams'
     },
@@ -89,7 +87,7 @@ const mockProfiles: Profile[] = [
         description: 'Mobile app developer skilled in Swift and Flutter.',
         techStacks: ['Swift', 'Flutter'],
         experience: 7,
-        availability: Availability.Occupied,
+        availability: false,
         project: { title: 'Project D', description: 'iOS App to create an interactive smart predicter of hosehold energy usage'},
         githubLink: 'https://githubLink.com/franklinpierce'
     },
@@ -101,7 +99,7 @@ const mockProfiles: Profile[] = [
         description: 'Expert in Python and Langchain.',
         techStacks: ['Java', 'Python', 'Langchain'],
         experience: 15,
-        availability: Availability.Available,
+        availability: true,
         project: null,
         githubLink: 'https://githubLink.com/gracehopper'
     },
@@ -113,7 +111,7 @@ const mockProfiles: Profile[] = [
         description: 'Software engineer with a focus on Angular.',
         techStacks: ['Python', 'Angular', 'Javascript', 'Typescript'],
         experience: 12,
-        availability: Availability.Occupied,
+        availability: false,
         project: { title: 'Project D', description: 'Public transport tracker for Company D'},
         githubLink: 'https://githubLink.com/henryford'
     },
@@ -125,7 +123,7 @@ const mockProfiles: Profile[] = [
         description: 'Software engineer with a focus on UI/UX design.',
         techStacks: ['JavaScript', 'CSS', 'HTML'],
         experience: 3,
-        availability: Availability.Available,
+        availability: true,
         project: null,
         githubLink: 'https://githubLink.com/ivylee'
     },
@@ -137,7 +135,7 @@ const mockProfiles: Profile[] = [
         description: 'Specialist in Java.',
         techStacks: ['Java'],       
         experience: 9,
-        availability: Availability.Occupied,
+        availability: false,
         project: { title: 'Human Resources Management Project', description: 'HR Portal for Company Z'},
         githubLink: 'https://githubLink.com/jackdaniels'
     },
@@ -149,7 +147,7 @@ const mockProfiles: Profile[] = [
         description: 'Versatile software engineer with experience in React.',
         techStacks: ['JavaScript', 'React'],
         experience: 6,
-        availability: Availability.Available,
+        availability: true,
         project: null,
         githubLink: 'https://githubLink.com/kevinbacon'
     },
@@ -161,7 +159,7 @@ const mockProfiles: Profile[] = [
         description: 'Software engineer with expertise in testing.',
         techStacks: ['Unit Testing', 'Python'],
         experience: 11,
-        availability: Availability.Occupied,
+        availability: false,
         project: { title: 'Human Resources Management Project', description: 'Developing test cases for HR Portal Project for Company Z'},
         githubLink: 'https://githubLink.com/lindahamilton'
     },
@@ -173,7 +171,7 @@ const mockProfiles: Profile[] = [
         description: 'Software engineer with a focus on AI.',
         techStacks: ['Langchain', 'Python'],
         experience: 1,
-        availability: Availability.Available,
+        availability: true,
         project: null,
         githubLink: 'https://githubLink.com/maryshelley'
     },
@@ -185,7 +183,7 @@ const mockProfiles: Profile[] = [
         description: 'Software engineer with excellent problem-solving techStacks.',
         techStacks: ['JavaScript', 'TypeScript', 'Angular'],
         experience: 7,
-        availability: Availability.Occupied,
+        availability: false,
         project: { title: 'API Assist', description: 'Developing interactive chatbot that could handle tasks according to API specifications'},
         githubLink: 'https://githubLink.com/nancydrew'
     },
@@ -197,7 +195,7 @@ const mockProfiles: Profile[] = [
         description: 'App developer with strong analytical techStacks.',
         techStacks: ['Flutter','Swift'],
         experience: 5,
-        availability: Availability.Available,
+        availability: true,
         project: null,
         githubLink: 'https://githubLink.com/olivertwist'
     },
@@ -209,7 +207,7 @@ const mockProfiles: Profile[] = [
         description: 'Backend engineer with a focus on AI.',
         techStacks: ['Langgraph', 'Python'],
         experience: 8,
-        availability: Availability.Occupied,
+        availability: false,
         project: { title: 'API Assist', description: 'Developing interactive chatbot that could handle tasks according to API specifications'},
         githubLink: 'https://githubLink.com/paulbunyan'
     },
@@ -221,7 +219,7 @@ const mockProfiles: Profile[] = [
         description: 'Software with expertise in multiple programming languages.',
         techStacks: ['Java', 'Python', 'C'],
         experience: 10,
-        availability: Availability.Available,
+        availability: true,
         project: null,
         githubLink: 'https://githubLink.com/quincyjones'
     },
@@ -233,7 +231,7 @@ const mockProfiles: Profile[] = [
         description: 'Frontend developer with a strong portfolio in Vue.js.',
         techStacks: ['Vue.js', 'JavaScript', 'CSS'],
         experience: 6,
-        availability: Availability.Occupied,
+        availability: false,
         project: { title: 'Project A', description: 'Insurance Portal for Company A'},
         githubLink: 'https://githubLink.com/ritahayworth'
     },
@@ -245,21 +243,21 @@ const mockProfiles: Profile[] = [
         description: 'Frontend developer with experience in Angular.',
         techStacks: ['Javascript', 'Typescript', 'Angular'],
         experience: 20,
-        availability: Availability.Available,
+        availability: true,
         project: null,
         githubLink: 'https://githubLink.com/stevejobs'
     },
     {
         id: 20,
-        name: 'Tom Payne',
+        name: 'Haonan Yu',
         avatar: "/avatar1.png",
         email: 'tom.payne@gmail.com',
-        description: 'Software engineer with a focus on Node.js and Swift.',
-        techStacks: ['Node.js', 'Swift', 'JavaScript'],
-        experience: 3,
-        availability: Availability.Occupied,
+        description: 'Software engineer with a focus on Node.js and React.',
+        techStacks: ['Node.js', 'React', 'JavaScript'],
+        experience: 7,
+        availability: false,
         project: { title: 'Project A', description: 'Insurance Portal for Company A'},
-        githubLink: 'https://github.com/twpayne'
+        githubLink: 'https://github.com/haonanyu-slalom'
     }
 ];
 
