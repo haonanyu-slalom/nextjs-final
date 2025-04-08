@@ -42,7 +42,7 @@ export default function DeveloperDirectory() {
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="mb-4">
         <h1 className="text-2xl font-bold mb-2">Dev Directory</h1>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <textarea
               placeholder="Describe your developer needs..."
