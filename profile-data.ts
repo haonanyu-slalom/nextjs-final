@@ -262,3 +262,11 @@ const mockProfiles: Profile[] = [
 ];
 
 export default mockProfiles;
+
+export const techStacks: string[] = Array.from(
+    new Set(mockProfiles.flatMap(profile => profile.techStacks))
+);
+
+export const experienceLevel: string[] = ['Junior', 'Mid', 'Senior'];
+
+export const availability: string[] = ['Occupied', 'Available'];

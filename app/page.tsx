@@ -8,25 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
+import mockProfiles from "@/profile-data";
+import MultiSelectDropdown from "@/components/ui/multiselect";
 
-const developers = [
-  {
-    id: 1,
-    name: "Jane Doe",
-    avatar: "/avatar1.png",
-    techStacks: ["React", "Node.js"],
-    level: "Senior",
-    bio: "Frontend engineer with 6 years of experience",
-  },
-  {
-    id: 2,
-    name: "John Smith",
-    avatar: "/avatar2.png",
-    techStacks: ["Python", "Django", "AI"],
-    level: "Mid",
-    bio: "Backend and AI enthusiast",
-  },
-];
 
 export default function DeveloperDirectory() {
   const [search, setSearch] = useState("");
@@ -34,7 +18,8 @@ export default function DeveloperDirectory() {
   const [recommended, setRecommended] = useState<any[]>([]);
   const [loadingAI, setLoadingAI] = useState(false);
   const [requirementText, setRequirementText] = useState("");
-
+  const [developers, setDevelopers] = useState(mockProfiles)
+  
   const filteredDevs = developers.filter((dev) => {
     return (
       dev.name.toLowerCase().includes(search.toLowerCase()) &&
@@ -56,7 +41,7 @@ export default function DeveloperDirectory() {
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="mb-4">
         <h1 className="text-2xl font-bold mb-2">Dev Directory</h1>
-        <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-6">
           <textarea
             placeholder="Describe your developer needs..."
             value={requirementText}
@@ -92,7 +77,7 @@ export default function DeveloperDirectory() {
                       <div>
                         <h2 className="text-lg font-semibold">{dev.name}</h2>
                         <p className="text-sm text-gray-600">
-                          {dev.level} Developer
+                          {dev.experience} year(s) experience
                         </p>
                       </div>
                     </div>
@@ -124,7 +109,7 @@ export default function DeveloperDirectory() {
         )}
       </header>
 
-      <div className="mb-6">
+      <div className="mb-2">
         <Input
           type="text"
           placeholder="Search developers..."
@@ -133,17 +118,15 @@ export default function DeveloperDirectory() {
           className="w-full sm:w-64"
         />
       </div>
+      
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex space-x-4">
+          <MultiSelectDropdown title="Tech Stack"></MultiSelectDropdown>
+          <MultiSelectDropdown title="Experience Level"></MultiSelectDropdown>
+          <MultiSelectDropdown title="Availability"></MultiSelectDropdown>
+        </div>
 
-      <div className="mb-4 flex gap-2 flex-wrap">
-        {["React", "Node.js", "Python", "Django", "AI"].map((tech) => (
-          <Button
-            key={tech}
-            variant={selectedTech === tech ? "default" : "outline"}
-            onClick={() => setSelectedTech(selectedTech === tech ? null : tech)}
-          >
-            {tech}
-          </Button>
-        ))}
+        <Button>Add Profile</Button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -158,10 +141,10 @@ export default function DeveloperDirectory() {
                 />
                 <div>
                   <h2 className="text-lg font-semibold">{dev.name}</h2>
-                  <p className="text-sm text-gray-600">{dev.level} Developer</p>
+                  <p className="text-sm text-gray-600">{dev.experience} year(s) experience</p>
                 </div>
               </div>
-              <p className="mt-2 text-sm text-gray-700">{dev.bio}</p>
+              <p className="mt-2 text-sm text-gray-700">{dev.description}</p>
               <div className="mt-2 flex flex-wrap gap-1">
                 {dev.techStacks.map((tech) => (
                   <span
