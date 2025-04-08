@@ -1,22 +1,28 @@
 // Tailwind-based Developer Profile Page UI
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+  CheckCircle,
+  Code,
+  ExternalLink,
+  Github,
+  Mail,
+  XCircle,
+} from "lucide-react";
+import Link from "next/link";
 
 const mockProfile = {
   id: 1,
   name: "Jane Doe",
   avatar: "/avatar1.png",
   techStacks: ["React", "Node.js", "TailwindCSS"],
-  level: "Senior",
-  bio: "Frontend engineer with 6 years of experience in building scalable applications.",
-  ongoingProjects: [
-    {
-      title: "Dev Directory",
-      description: "A directory of top developers with AI features.",
-    },
-    { title: "Task Manager", description: "Productivity app for agile teams." },
-  ],
-  team: ["Alice", "Bob", "Charlie"],
+  experience: 3,
+  description:
+    "Frontend engineer with 6 years of experience in building scalable applications.",
+  project: "React Project",
+  email: "jane.doe@slalom.com",
+  availability: true,
+  githubLink: "https://github.com/haonanyu-slalom",
 };
 
 export default async function DeveloperProfile(props: {
@@ -24,6 +30,7 @@ export default async function DeveloperProfile(props: {
 }) {
   const params = await props.params;
   const id = params.id;
+  const level = mockProfile.experience > 3 ? "junior" : "senior";
   console.log(id);
   const dev = mockProfile; // Would fetch by ID in a real app
 
@@ -38,7 +45,7 @@ export default async function DeveloperProfile(props: {
           />
           <div>
             <h1 className="text-3xl font-bold">{dev.name}</h1>
-            <p className="text-gray-600 text-sm">{dev.level} Developer</p>
+            <p className="text-gray-600 text-sm">{level} Developer</p>
             <div className="mt-2 flex flex-wrap gap-2">
               {dev.techStacks.map((tech) => (
                 <span
@@ -52,39 +59,71 @@ export default async function DeveloperProfile(props: {
           </div>
         </div>
 
+        <div className="mb-6 text-sm text-gray-700 space-y-2">
+          <div className="flex items-center gap-2">
+            <Mail className="w-4 h-4 text-gray-500" />
+            <a href={`mailto:${dev.email}`} className="hover:underline">
+              {dev.email}
+            </a>
+          </div>
+          <div className="flex items-center gap-2">
+            <ExternalLink className="w-4 h-4 text-gray-500" />
+            <a
+              href={dev.githubLink}
+              target="_blank"
+              className="hover:underline"
+            >
+              {dev.githubLink}
+            </a>
+          </div>
+          <div className="flex items-center gap-2">
+            {dev.availability ? (
+              <>
+                <CheckCircle className="w-4 h-4 text-green-500" />
+                <span>Available for new projects</span>
+              </>
+            ) : (
+              <>
+                <XCircle className="w-4 h-4 text-red-500" />
+                <span>Not available</span>
+              </>
+            )}
+          </div>
+        </div>
+
         <section className="mb-6">
           <h2 className="text-xl font-semibold mb-2">About</h2>
-          <p className="text-gray-700 text-sm leading-relaxed">{dev.bio}</p>
+          <p className="text-gray-700 text-sm leading-relaxed">
+            {dev.description}
+          </p>
         </section>
 
         <section className="mb-6">
-          <h2 className="text-xl font-semibold mb-2">Ongoing Projects</h2>
-          <ul className="list-disc list-inside text-sm text-gray-700">
-            {dev.ongoingProjects.map((project, i) => (
-              <li key={i}>
-                <strong>{project.title}:</strong> {project.description}
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="mb-6">
-          <h2 className="text-xl font-semibold mb-2">Team</h2>
-          <div className="flex gap-3 flex-wrap">
-            {dev.team.map((member) => (
-              <span
-                key={member}
-                className="bg-gray-200 text-gray-800 text-xs px-3 py-1 rounded-full"
-              >
-                {member}
-              </span>
-            ))}
+          <h2 className="text-xl font-semibold mb-2">Current Project</h2>
+          <div className="bg-gray-100 border border-gray-200 rounded-xl p-4 shadow-sm">
+            <div className="flex items-center gap-2 mb-1">
+              <Code className="w-4 h-4 text-indigo-500" />
+              <h3 className="text-lg font-semibold text-gray-800">
+                {dev.project}
+              </h3>
+            </div>
+            <p className="text-sm text-gray-600 leading-relaxed">
+              {dev.project}
+            </p>
           </div>
         </section>
 
         <div className="flex gap-4">
-          <Button variant="default">Contact</Button>
-          <Button variant="outline">Back</Button>
+          <Link href="/" className={buttonVariants({ variant: "outline" })}>
+            Back
+          </Link>
+
+          <Link
+            href={`/profile/${id}/edit`}
+            className={buttonVariants({ variant: "outline" })}
+          >
+            Edit
+          </Link>
         </div>
       </div>
     </div>
