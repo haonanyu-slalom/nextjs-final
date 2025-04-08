@@ -1,6 +1,6 @@
 import { Url } from "next/dist/shared/lib/router/router";
 
-interface Profile {
+export interface Profile {
     id: number;
     name: string;
     avatar:  string;

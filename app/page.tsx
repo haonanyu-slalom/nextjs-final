@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
-import mockProfiles from "@/profile-data";
+import mockProfiles, { Profile } from "@/profile-data";
 import MultiSelectDropdown from "@/components/ui/multiselect";
-
+import TeamDialog from "@/components/team-dialog";
 
 export default function DeveloperDirectory() {
   const [search, setSearch] = useState("");
@@ -19,6 +19,7 @@ export default function DeveloperDirectory() {
   const [loadingAI, setLoadingAI] = useState(false);
   const [requirementText, setRequirementText] = useState("");
   const [developers, setDevelopers] = useState(mockProfiles)
+  const [members, setMembers] = useState<Profile[]>([mockProfiles[0]])
   
   const filteredDevs = developers.filter((dev) => {
     return (
@@ -41,21 +42,26 @@ export default function DeveloperDirectory() {
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="mb-4">
         <h1 className="text-2xl font-bold mb-2">Dev Directory</h1>
-        <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-6">
-          <textarea
-            placeholder="Describe your developer needs..."
-            value={requirementText}
-            onChange={(e) => setRequirementText(e.target.value)}
-            className="w-full sm:w-[40rem] h-24 p-2 border border-gray-300 rounded-lg shadow-sm"
-          />
-          <Button
-            onClick={handleAIRecommendation}
-            disabled={loadingAI}
-            className="self-start"
-          >
-            {loadingAI ? "Recommending..." : "Recommend Developers"}
-          </Button>
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <textarea
+              placeholder="Describe your developer needs..."
+              value={requirementText}
+              onChange={(e) => setRequirementText(e.target.value)}
+              className="w-full sm:w-[40rem] h-24 p-2 border border-gray-300 rounded-lg shadow-sm"
+            />
+            <Button
+              onClick={handleAIRecommendation}
+              disabled={loadingAI}
+              // className="self-start"
+            >
+              {loadingAI ? "Recommending..." : "Recommend Developers"}
+            </Button>
+          </div>
+          
+          <TeamDialog members={members}></TeamDialog>
         </div>
+
         {recommended.length > 0 && (
           <div className="mb-6">
             <h2 className="text-xl font-semibold mb-2">
