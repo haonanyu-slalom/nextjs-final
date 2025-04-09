@@ -1,5 +1,4 @@
 "use client";
-
 // Tailwind-based Developer Directory Homepage UI (Grid View with AI Integration + Large Input Textarea)
 
 import { useState } from "react";
@@ -8,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
-import  { Profile } from "@/profile-data";
+import { Profile } from "@/profile-data";
 import MultiSelectDropdown from "@/components/ui/multiselect";
 import TeamDialog from "@/components/ui/team-dialog";
 import { useProfiles } from "@/lib/profilesContext";
@@ -67,14 +66,11 @@ export default function DeveloperDirectory() {
               onChange={(e) => setRequirementText(e.target.value)}
               className="w-full sm:w-[40rem] h-24 p-2 border border-gray-300 rounded-lg shadow-sm"
             />
-            <Button
-              onClick={handleAIRecommendation}
-              disabled={loadingAI}
-            >
+            <Button onClick={handleAIRecommendation} disabled={loadingAI}>
               {loadingAI ? "Recommending..." : "Recommend Developers"}
             </Button>
           </div>
-          
+
           <TeamDialog members={members}></TeamDialog>
         </div>
 
@@ -84,7 +80,7 @@ export default function DeveloperDirectory() {
               Recommended Developers
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {recommended.map((dev) => (
+              {recommended.map((dev: Profile) => (
                 <Card
                   key={dev.id}
                   className="rounded-2xl shadow-md border-blue-500 border"
@@ -103,7 +99,9 @@ export default function DeveloperDirectory() {
                         </p>
                       </div>
                     </div>
-                    <p className="mt-2 text-sm text-gray-700">{dev.bio}</p>
+                    <p className="mt-2 text-sm text-gray-700">
+                      {dev.description}
+                    </p>
                     <div className="mt-2 flex flex-wrap gap-1">
                       {dev.techStacks.map((tech: string) => (
                         <span
@@ -116,7 +114,7 @@ export default function DeveloperDirectory() {
                     </div>
                     <div className="mt-4 flex justify-between">
                       <Link
-                        href="profile/1"
+                        href={"profile/" + dev.id}
                         className={buttonVariants({ variant: "outline" })}
                       >
                         View Profile
@@ -140,7 +138,7 @@ export default function DeveloperDirectory() {
           className="w-full sm:w-64"
         />
       </div>
-      
+
       <div className="flex items-center justify-between mb-6">
         <div className="flex space-x-4">
           <MultiSelectDropdown 
@@ -175,7 +173,9 @@ export default function DeveloperDirectory() {
                 />
                 <div>
                   <h2 className="text-lg font-semibold">{dev.name}</h2>
-                  <p className="text-sm text-gray-600">{dev.experience} year(s) experience</p>
+                  <p className="text-sm text-gray-600">
+                    {dev.experience} year(s) experience
+                  </p>
                 </div>
               </div>
               <p className="mt-2 text-sm text-gray-700">{dev.description}</p>
@@ -191,7 +191,7 @@ export default function DeveloperDirectory() {
               </div>
               <div className="mt-4 flex justify-between">
                 <Link
-                  href="profile/1"
+                  href={"profile/" + dev.id}
                   className={buttonVariants({ variant: "outline" })}
                 >
                   View Profile
