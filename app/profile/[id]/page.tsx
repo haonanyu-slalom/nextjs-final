@@ -22,8 +22,27 @@ export default function DeveloperProfile({
   const id = Number(params.id);
   const { profiles, loadProfiles, getProfile } = useProfiles();
   const profile = getProfile(Number(id));
-  const level = profile!.experience > 3 ? "junior" : "senior";
+  const level = profile!.experience <= 2 ? "Junior" : (profile!.experience <= 6 ? "Mid" : "Senior");
   const dev = profile!; // Would fetch by ID in a real app
+
+  const currentProject = () => {
+    return (
+      <section className="mb-6">
+      <h2 className="text-xl font-semibold mb-2">Current Project</h2>
+      <div className="bg-gray-100 border border-gray-200 rounded-xl p-4 shadow-sm">
+        <div className="flex items-center gap-2 mb-1">
+          <Code className="w-4 h-4 text-indigo-500" />
+          <h3 className="text-lg font-semibold text-gray-800">
+            {dev.project?.title}
+          </h3>
+        </div>
+        <p className="text-sm text-gray-600 leading-relaxed">
+          {dev.project?.description}
+        </p>
+      </div>
+    </section>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -89,20 +108,7 @@ export default function DeveloperProfile({
           </p>
         </section>
 
-        <section className="mb-6">
-          <h2 className="text-xl font-semibold mb-2">Current Project</h2>
-          <div className="bg-gray-100 border border-gray-200 rounded-xl p-4 shadow-sm">
-            <div className="flex items-center gap-2 mb-1">
-              <Code className="w-4 h-4 text-indigo-500" />
-              <h3 className="text-lg font-semibold text-gray-800">
-                {dev.project?.title}
-              </h3>
-            </div>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              {dev.project?.description}
-            </p>
-          </div>
-        </section>
+        {!dev.availability && currentProject()}
 
         <div className="flex gap-4">
           <Link href="/" className={buttonVariants({ variant: "outline" })}>
@@ -120,3 +126,5 @@ export default function DeveloperProfile({
     </div>
   );
 }
+
+

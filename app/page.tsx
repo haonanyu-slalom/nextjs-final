@@ -9,23 +9,40 @@ import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { Profile } from "@/profile-data";
 import MultiSelectDropdown from "@/components/ui/multiselect";
-import TeamDialog from "@/components/team-dialog";
+import TeamDialog from "@/components/ui/team-dialog";
 import { useProfiles } from "@/lib/profilesContext";
+import { CheckCircle, XCircle } from "lucide-react";
 
 export default function DeveloperDirectory() {
   const [search, setSearch] = useState("");
-  const [selectedTech, setSelectedTech] = useState<string | null>(null);
+  const [selectedTech, setSelectedTech] = useState<string[]>([]);
+  const [selectedExp, setSelectedExp] = useState<string[]>([]);
+  const [selectedAvailability, setSelectedAvailability] = useState<string[]>([]);
   const [recommended, setRecommended] = useState<any[]>([]);
   const [loadingAI, setLoadingAI] = useState(false);
   const [requirementText, setRequirementText] = useState("");
   const { profiles, loadProfiles, getProfile } = useProfiles();
-  const [members, setMembers] = useState<Profile[]>([profiles[0]]);
-
+  const [members, setMembers] = useState<Profile[]>([profiles[0]])
+  
   const filteredDevs = profiles.filter((dev) => {
-    return (
-      dev.name.toLowerCase().includes(search.toLowerCase()) &&
-      (!selectedTech || dev.techStacks.includes(selectedTech))
-    );
+    const nameFiltered = dev.name.toLowerCase().includes(search.toLowerCase());
+    const techFiltered = selectedTech.length === 0 
+      || selectedTech.some(tech => dev.techStacks.includes(tech));
+    const expFiltered = selectedExp.length === 0 
+      || selectedExp.some(exp => (
+        exp === "Junior" 
+          ? (dev.experience <= 2)
+          : exp === "Mid" 
+            ? (dev.experience <=6)
+            : dev.experience > 6
+    )); 
+    const avFiltered = selectedAvailability.length === 0 
+      || selectedAvailability.some(av => (
+        av === "Available"
+          ? dev.availability
+          : !dev.availability
+      ));
+    return nameFiltered	&& techFiltered && expFiltered && avFiltered;
   });
 
   const handleAIRecommendation = async () => {
@@ -125,9 +142,21 @@ export default function DeveloperDirectory() {
 
       <div className="flex items-center justify-between mb-6">
         <div className="flex space-x-4">
-          <MultiSelectDropdown title="Tech Stack"></MultiSelectDropdown>
-          <MultiSelectDropdown title="Experience Level"></MultiSelectDropdown>
-          <MultiSelectDropdown title="Availability"></MultiSelectDropdown>
+          <MultiSelectDropdown 
+            title="Tech Stack" 
+            selectedOptions={selectedTech}
+            onSelectChange={setSelectedTech}
+          />
+          <MultiSelectDropdown 
+            title="Experience Level" 
+            selectedOptions={selectedExp}
+            onSelectChange={setSelectedExp}
+          />
+          <MultiSelectDropdown 
+            title="Availability" 
+            selectedOptions={selectedAvailability}
+            onSelectChange={setSelectedAvailability}
+          />
         </div>
 
         <Button>Add Profile</Button>
@@ -144,7 +173,13 @@ export default function DeveloperDirectory() {
                   className="w-14 h-14 rounded-full object-cover"
                 />
                 <div>
-                  <h2 className="text-lg font-semibold">{dev.name}</h2>
+                  <div className="flex gap-4">
+                    <h2 className="text-lg font-semibold">{dev.name}</h2>
+                    {dev.availability 
+                      ? <CheckCircle className="h-4 w-4 text-green-500 mt-2"></CheckCircle>
+                      : <XCircle className="h-4 w-4 text-red-500 mt-2"></XCircle>
+                    }
+                  </div>
                   <p className="text-sm text-gray-600">
                     {dev.experience} year(s) experience
                   </p>
