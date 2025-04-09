@@ -11,6 +11,7 @@ import { Profile } from "@/profile-data";
 import MultiSelectDropdown from "@/components/ui/multiselect";
 import TeamDialog from "@/components/team-dialog";
 import { useProfiles } from "@/lib/profilesContext";
+import { useRouter } from "next/navigation";
 
 export default function DeveloperDirectory() {
   const [search, setSearch] = useState("");
@@ -18,8 +19,9 @@ export default function DeveloperDirectory() {
   const [recommended, setRecommended] = useState<any[]>([]);
   const [loadingAI, setLoadingAI] = useState(false);
   const [requirementText, setRequirementText] = useState("");
-  const { profiles, loadProfiles, getProfile } = useProfiles();
+  const { profiles, createProfile } = useProfiles();
   const [members, setMembers] = useState<Profile[]>([profiles[0]]);
+  const router = useRouter();
 
   const filteredDevs = profiles.filter((dev) => {
     return (
@@ -27,6 +29,11 @@ export default function DeveloperDirectory() {
       (!selectedTech || dev.techStacks.includes(selectedTech))
     );
   });
+
+  function handleCreateProfile() {
+    const id = createProfile();
+    router.push("/profile/" + id + "/edit");
+  }
 
   const handleAIRecommendation = async () => {
     setLoadingAI(true);
@@ -130,7 +137,7 @@ export default function DeveloperDirectory() {
           <MultiSelectDropdown title="Availability"></MultiSelectDropdown>
         </div>
 
-        <Button>Add Profile</Button>
+        <Button onClick={handleCreateProfile}>Add Profile</Button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

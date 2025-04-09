@@ -22,7 +22,7 @@ export default function DeveloperProfile({
   const id = Number(params.id);
   const { profiles, loadProfiles, getProfile } = useProfiles();
   const profile = getProfile(Number(id));
-  const level = profile!.experience > 3 ? "junior" : "senior";
+  const level = profile!.experience > 3 ? "senior" : "junior";
   const dev = profile!; // Would fetch by ID in a real app
 
   return (
