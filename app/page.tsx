@@ -11,6 +11,7 @@ import Link from "next/link";
 import mockProfiles, { Profile } from "@/profile-data";
 import MultiSelectDropdown from "@/components/ui/multiselect";
 import TeamDialog from "@/components/team-dialog";
+// import { useProfiles } from "@/lib/profilesContext";
 
 export default function DeveloperDirectory() {
   const [search, setSearch] = useState("");
@@ -20,6 +21,7 @@ export default function DeveloperDirectory() {
   const [requirementText, setRequirementText] = useState("");
   const [developers, setDevelopers] = useState(mockProfiles)
   const [members, setMembers] = useState<Profile[]>([mockProfiles[0]])
+  // const { profiles, loadProfiles, getProfile } = useProfiles();
   
   const filteredDevs = developers.filter((dev) => {
     return (
