@@ -14,8 +14,8 @@ export interface Profile {
 }
 
 interface Project {
-    title: String;
-    description: String;
+    title: string;
+    description: string;
 }
 
 const mockProfiles: Profile[] = [

@@ -1,13 +1,11 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
+  DialogTrigger,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogDescription
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Profile } from "@/profile-data"
 import { Button } from "@/components/ui/button"
 import React from 'react';
@@ -15,7 +13,7 @@ import Link from "next/link"
 
 
 interface TeamDialogProps {
-    members: Profile[]
+    members: Profile[];
 }
 
 const TeamDialog: React.FC<TeamDialogProps> = ({members}) => {
@@ -25,6 +23,10 @@ const TeamDialog: React.FC<TeamDialogProps> = ({members}) => {
             <Button variant="outline">My Team</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+                <DialogTitle>My Team</DialogTitle>
+                <DialogDescription>Add your desired developers here</DialogDescription>
+            </DialogHeader>
             {
                 members.map((member) => (
                     <Link

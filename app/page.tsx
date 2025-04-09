@@ -8,9 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
-import mockProfiles, { Profile } from "@/profile-data";
+import  { Profile } from "@/profile-data";
 import MultiSelectDropdown from "@/components/ui/multiselect";
 import TeamDialog from "@/components/team-dialog";
+import { useProfiles } from "@/lib/profilesContext";
 
 export default function DeveloperDirectory() {
   const [search, setSearch] = useState("");
@@ -18,10 +19,11 @@ export default function DeveloperDirectory() {
   const [recommended, setRecommended] = useState<any[]>([]);
   const [loadingAI, setLoadingAI] = useState(false);
   const [requirementText, setRequirementText] = useState("");
-  const [developers, setDevelopers] = useState(mockProfiles)
-  const [members, setMembers] = useState<Profile[]>([mockProfiles[0]])
+  const { profiles, loadProfiles, getProfile } = useProfiles();
+  const [members, setMembers] = useState<Profile[]>([profiles[0]])
+
   
-  const filteredDevs = developers.filter((dev) => {
+  const filteredDevs = profiles.filter((dev) => {
     return (
       dev.name.toLowerCase().includes(search.toLowerCase()) &&
       (!selectedTech || dev.techStacks.includes(selectedTech))
@@ -33,7 +35,7 @@ export default function DeveloperDirectory() {
     // Simulate async AI call using requirementText
     setTimeout(() => {
       console.log("User requirement:", requirementText);
-      setRecommended([developers[0]]);
+      setRecommended([profiles[0]]);
       setLoadingAI(false);
     }, 1000);
   };
@@ -53,7 +55,6 @@ export default function DeveloperDirectory() {
             <Button
               onClick={handleAIRecommendation}
               disabled={loadingAI}
-              // className="self-start"
             >
               {loadingAI ? "Recommending..." : "Recommend Developers"}
             </Button>
