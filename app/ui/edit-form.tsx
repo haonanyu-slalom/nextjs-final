@@ -19,7 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { useProfiles } from "@/lib/profilesContext";
-import { notFound, redirect } from "next/navigation";
+import { notFound, redirect, useRouter } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
@@ -35,11 +35,18 @@ const formSchema = z.object({
 });
 
 export default function ProfileForm({ id }: { id: string }) {
-  const { getProfile, editProfile } = useProfiles();
+  const router = useRouter();
+  const { getProfile, editProfile, deleteProfile } = useProfiles();
   const profile = getProfile(Number(id));
   if (!profile) {
     notFound();
   }
+
+  function handleDeleteProfile(): void {
+    deleteProfile(Number(id));
+    router.push("/");
+  }
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -237,13 +244,25 @@ export default function ProfileForm({ id }: { id: string }) {
 
         <div className="flex gap-4">
           <Button type="submit">Save</Button>
-          <Link href="/" className={buttonVariants({ variant: "outline" })}>
+          <Link
+            href={"/profile/" + id}
+            className={buttonVariants({ variant: "outline" })}
+          >
             Back
           </Link>
 
-          <Link href="/" className={buttonVariants({ variant: "outline" })}>
+          <Button
+            onClick={() => {
+              const confirmed = window.confirm(
+                "Are you sure you want to delete this profile?"
+              );
+              if (confirmed) {
+                handleDeleteProfile();
+              }
+            }}
+          >
             Delete
-          </Link>
+          </Button>
         </div>
       </form>
     </Form>
