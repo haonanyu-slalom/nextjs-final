@@ -1,6 +1,7 @@
 // Tailwind-based Developer Profile Page UI
-
+"use client";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { useProfiles } from "@/lib/profilesContext";
 import {
   CheckCircle,
   Code,
@@ -10,29 +11,19 @@ import {
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
+import { use } from "react";
 
-const mockProfile = {
-  id: 1,
-  name: "Jane Doe",
-  avatar: "/avatar1.png",
-  techStacks: ["React", "Node.js", "TailwindCSS"],
-  experience: 3,
-  description:
-    "Frontend engineer with 6 years of experience in building scalable applications.",
-  project: "React Project",
-  email: "jane.doe@slalom.com",
-  availability: true,
-  githubLink: "https://github.com/haonanyu-slalom",
-};
-
-export default async function DeveloperProfile(props: {
+export default function DeveloperProfile({
+  params: paramsPromise,
+}: {
   params: Promise<{ id: string }>;
 }) {
-  const params = await props.params;
-  const id = params.id;
-  const level = mockProfile.experience > 3 ? "junior" : "senior";
-  console.log(id);
-  const dev = mockProfile; // Would fetch by ID in a real app
+  const params = use(paramsPromise); // 👈 unwrap the Promise
+  const id = Number(params.id);
+  const { profiles, loadProfiles, getProfile } = useProfiles();
+  const profile = getProfile(Number(id));
+  const level = profile!.experience > 3 ? "junior" : "senior";
+  const dev = profile!; // Would fetch by ID in a real app
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -69,11 +60,11 @@ export default async function DeveloperProfile(props: {
           <div className="flex items-center gap-2">
             <ExternalLink className="w-4 h-4 text-gray-500" />
             <a
-              href={dev.githubLink}
+              href={dev.githubLink.toString()}
               target="_blank"
               className="hover:underline"
             >
-              {dev.githubLink}
+              {dev.githubLink.toString()}
             </a>
           </div>
           <div className="flex items-center gap-2">
@@ -104,11 +95,11 @@ export default async function DeveloperProfile(props: {
             <div className="flex items-center gap-2 mb-1">
               <Code className="w-4 h-4 text-indigo-500" />
               <h3 className="text-lg font-semibold text-gray-800">
-                {dev.project}
+                {dev.project?.title}
               </h3>
             </div>
             <p className="text-sm text-gray-600 leading-relaxed">
-              {dev.project}
+              {dev.project?.description}
             </p>
           </div>
         </section>
