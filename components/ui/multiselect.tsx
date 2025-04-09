@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 import { techStacks, experienceLevel, availability } from "@/profile-data";
 
 interface MultiSelectDropdownProps {
-    title: String;
+    title: string;
 }
 
 const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({title}) => { 
