@@ -1,7 +1,7 @@
 "use client";
 // Tailwind-based Developer Directory Homepage UI (Grid View with AI Integration + Large Input Textarea)
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -22,7 +22,7 @@ export default function DeveloperDirectory() {
   const [loadingAI, setLoadingAI] = useState(false);
   const [requirementText, setRequirementText] = useState("");
   const { profiles, loadProfiles, getProfile } = useProfiles();
-  const [members, setMembers] = useState<Profile[]>([profiles[0]])
+  const [members, setMembers] = useState<Profile[]>([])
   
   const filteredDevs = profiles.filter((dev) => {
     const nameFiltered = dev.name.toLowerCase().includes(search.toLowerCase());
@@ -54,6 +54,29 @@ export default function DeveloperDirectory() {
       setLoadingAI(false);
     }, 1000);
   };
+
+  const toggleMember = (dev: Profile) => {
+    if (isMember(dev.id)) {
+      setMembers(members.filter(mem => mem.id !== dev.id));
+    } else {
+      setMembers([...members, dev]);
+    };
+  };
+
+  const isMember = (devId: number) => {
+    return members.some(member => member.id === devId);
+  }
+
+  useEffect(() => {
+    const savedMembers = localStorage.getItem("members");
+    if(savedMembers) {
+      setMembers(JSON.parse(savedMembers))
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem("members", JSON.stringify(members));
+  }, [members]);
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -120,7 +143,15 @@ export default function DeveloperDirectory() {
                       >
                         View Profile
                       </Link>
-                      <Button>Add to List</Button>
+                      <Button
+                        onClick={() => toggleMember(dev)}
+                        variant={isMember(dev.id) ? "secondary" : "default"}
+                      >
+                        {isMember(dev.id) 
+                        ? (<>Remove from List</>)
+                        : (<>Add to List</>)
+                        }
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -203,7 +234,15 @@ export default function DeveloperDirectory() {
                 >
                   View Profile
                 </Link>
-                <Button>Add to List</Button>
+                <Button
+                  onClick={() => toggleMember(dev)}
+                  variant={isMember(dev.id) ? "secondary" : "default"}
+                >
+                  {isMember(dev.id) 
+                  ? (<>Remove from List</>)
+                  : (<>Add to List</>)
+                  }
+                </Button>
               </div>
             </CardContent>
           </Card>
