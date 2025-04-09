@@ -19,8 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { useProfiles } from "@/lib/profilesContext";
-import { Profile } from "@/profile-data";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
@@ -36,8 +35,11 @@ const formSchema = z.object({
 });
 
 export default function ProfileForm({ id }: { id: string }) {
-  const { profiles, loadProfiles, getProfile, editProfile } = useProfiles();
-  const profile: Profile = getProfile(Number(id))!;
+  const { getProfile, editProfile } = useProfiles();
+  const profile = getProfile(Number(id));
+  if (!profile) {
+    notFound();
+  }
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -159,7 +161,10 @@ export default function ProfileForm({ id }: { id: string }) {
                 <Input
                   type="number"
                   {...field}
-                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                  onChange={(e) => {
+                    const value = e.target.valueAsNumber;
+                    field.onChange(isNaN(value) ? "0" : Number(value));
+                  }}
                 />
               </FormControl>
               <FormMessage />
