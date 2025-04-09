@@ -11,6 +11,7 @@ import { Profile } from "@/profile-data";
 import MultiSelectDropdown from "@/components/ui/multiselect";
 import TeamDialog from "@/components/ui/team-dialog";
 import { useProfiles } from "@/lib/profilesContext";
+import { CheckCircle, XCircle } from "lucide-react";
 
 export default function DeveloperDirectory() {
   const [search, setSearch] = useState("");
@@ -172,7 +173,13 @@ export default function DeveloperDirectory() {
                   className="w-14 h-14 rounded-full object-cover"
                 />
                 <div>
-                  <h2 className="text-lg font-semibold">{dev.name}</h2>
+                  <div className="flex gap-4">
+                    <h2 className="text-lg font-semibold">{dev.name}</h2>
+                    {dev.availability 
+                      ? <CheckCircle className="h-4 w-4 text-green-500 mt-2"></CheckCircle>
+                      : <XCircle className="h-4 w-4 text-red-500 mt-2"></XCircle>
+                    }
+                  </div>
                   <p className="text-sm text-gray-600">
                     {dev.experience} year(s) experience
                   </p>
