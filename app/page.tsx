@@ -24,9 +24,11 @@ export default function DeveloperDirectory() {
   const [recommended, setRecommended] = useState<any[]>([]);
   const [loadingAI, setLoadingAI] = useState(false);
   const [requirementText, setRequirementText] = useState("");
-  const { profiles, loadProfiles, getProfile } = useProfiles();
-  const [members, setMembers] = useState<Profile[]>([])
   
+  const router = useRouter();
+  const { profiles, createProfile, loadProfiles, getProfile } = useProfiles();
+  const [members, setMembers] = useState<Profile[]>([]);
+
   const filteredDevs = profiles.filter((dev) => {
     const nameFiltered = dev.name.toLowerCase().includes(search.toLowerCase());
     const techFiltered =
