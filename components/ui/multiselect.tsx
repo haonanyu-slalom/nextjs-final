@@ -10,22 +10,21 @@ import { techStacks, experienceLevel, availability } from "@/profile-data";
 
 interface MultiSelectDropdownProps {
     title: string;
+    selectedOptions: string[];
+    onSelectChange: (options: string[]) => void;
 }
 
-const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({title}) => { 
+const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({title, selectedOptions, onSelectChange}) => { 
     const [open, setOpen] = useState(false)
     const options = title === 'Experience Level' 
         ? experienceLevel 
         : (title === 'Tech Stack' ? techStacks : availability);
-    const [selectedOptions, setSelectedOptions] = useState<string[]>([])
 
     const toggleSelection = (option: string) => {
-        setSelectedOptions((currentSelections) => 
-            currentSelections.includes(option) 
-                ? currentSelections.filter((item) => item != option)
-                : [...currentSelections, option]
-        );
-        console.log(options)
+        const updatedSelections = selectedOptions.includes(option)
+            ? selectedOptions.filter((op) => {op !== option})
+            : [...selectedOptions, option];
+        onSelectChange(updatedSelections);
     };
     
     return (
