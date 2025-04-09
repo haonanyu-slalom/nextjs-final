@@ -161,7 +161,10 @@ export default function ProfileForm({ id }: { id: string }) {
                 <Input
                   type="number"
                   {...field}
-                  onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                  onChange={(e) => {
+                    const value = e.target.valueAsNumber;
+                    field.onChange(isNaN(value) ? "0" : Number(value));
+                  }}
                 />
               </FormControl>
               <FormMessage />
