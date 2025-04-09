@@ -19,6 +19,7 @@ interface ProfileContextProps {
     updatedData: Partial<Profile>
   ) => Profile | undefined;
   deleteProfile: (id: number) => void;
+  createProfile: () => number;
 }
 
 const ProfileContext = createContext<ProfileContextProps | undefined>(
@@ -33,7 +34,6 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     setIsMounted(true);
-
     const storedProfiles = localStorage.getItem("profiles");
     if (storedProfiles) {
       setProfiles(JSON.parse(storedProfiles));
@@ -61,6 +61,26 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({
     return getProfile(id);
   };
 
+  const createProfile = () => {
+    const maxId = Math.max(...profiles.map((profile) => profile.id));
+    const newId = maxId + 1;
+    const newProfile = {
+      id: newId,
+      name: "",
+      avatar: "/avatar1.png",
+      email: "",
+      description: "",
+      techStacks: [],
+      experience: 0,
+      availability: true,
+      project: null,
+      githubLink: "",
+    };
+    const updatedProfiles = [...profiles, newProfile];
+    setProfiles(updatedProfiles);
+    return newId;
+  };
+
   const deleteProfile = (id: number) => {
     const updatedProfiles = profiles.filter((profile) => profile.id !== id);
     setProfiles(updatedProfiles);
@@ -68,7 +88,14 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({
 
   return (
     <ProfileContext.Provider
-      value={{ profiles, loadProfiles, getProfile, editProfile, deleteProfile }}
+      value={{
+        profiles,
+        loadProfiles,
+        getProfile,
+        editProfile,
+        deleteProfile,
+        createProfile,
+      }}
     >
       {children}
     </ProfileContext.Provider>
