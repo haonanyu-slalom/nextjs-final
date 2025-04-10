@@ -1,7 +1,7 @@
 "use client";
 // Tailwind-based Developer Directory Homepage UI (Grid View with AI Integration + Large Input Textarea)
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,6 +15,12 @@ import { useRouter } from "next/navigation";
 import { CheckCircle, XCircle } from "lucide-react";
 
 export default function DeveloperDirectory() {
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
   const [search, setSearch] = useState("");
   const [selectedTech, setSelectedTech] = useState<string[]>([]);
   const [selectedExp, setSelectedExp] = useState<string[]>([]);
@@ -24,9 +30,23 @@ export default function DeveloperDirectory() {
   const [recommended, setRecommended] = useState<any[]>([]);
   const [loadingAI, setLoadingAI] = useState(false);
   const [requirementText, setRequirementText] = useState("");
+  
   const router = useRouter();
-  const { profiles, createProfile, loadProfiles, getProfile } = useProfiles();
-  const [members, setMembers] = useState<Profile[]>([profiles[0]]);
+  const { profiles, createProfile } = useProfiles();
+  const [members, setMembers] = useState<Profile[]>([]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem("members");
+      if (saved) setMembers(JSON.parse(saved));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (hasMounted) {
+      localStorage.setItem("members", JSON.stringify(members));
+    }
+  }, [members, hasMounted]);
 
   const filteredDevs = profiles.filter((dev) => {
     const nameFiltered = dev.name.toLowerCase().includes(search.toLowerCase());
@@ -65,6 +85,21 @@ export default function DeveloperDirectory() {
     }, 1000);
   };
 
+  const toggleMember = (dev: Profile) => {
+    setMembers(prevMembers => {
+      const isExisting = prevMembers.some(member => member.id === dev.id);
+      if (isExisting) {
+        return prevMembers.filter(member => member.id !== dev.id);
+      } else {
+        return [...prevMembers, dev];
+      }
+    });
+  };
+
+  const isMember = (devId: number) => {
+    return members.some(member => member.id === devId);
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="mb-4">
@@ -82,7 +117,12 @@ export default function DeveloperDirectory() {
             </Button>
           </div>
 
-          <TeamDialog members={members}></TeamDialog>
+          <TeamDialog 
+            members={members}
+            onRemoveMember={(memberId) => {
+              setMembers(prev => prev.filter(m => m.id !== memberId))
+            }}
+          />
         </div>
 
         {recommended.length > 0 && (
@@ -130,7 +170,15 @@ export default function DeveloperDirectory() {
                       >
                         View Profile
                       </Link>
-                      <Button>Add to List</Button>
+                      <Button
+                        onClick={() => toggleMember(dev)}
+                        variant={isMember(dev.id) ? "secondary" : "default"}
+                      >
+                        {isMember(dev.id)
+                        ? "Remove from List"
+                        : "Add to List"
+                        }
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -214,7 +262,15 @@ export default function DeveloperDirectory() {
                 >
                   View Profile
                 </Link>
-                <Button>Add to List</Button>
+                <Button
+                  onClick={() => toggleMember(dev)}
+                  variant={isMember(dev.id) ? "secondary" : "default"}
+                >
+                  {isMember(dev.id)
+                  ? "Remove from List"
+                  : "Add to List"
+                  }
+                </Button>
               </div>
             </CardContent>
           </Card>

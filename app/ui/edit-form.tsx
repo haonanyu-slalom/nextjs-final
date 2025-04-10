@@ -252,6 +252,7 @@ export default function ProfileForm({ id }: { id: string }) {
           </Link>
 
           <Button
+            variant="destructive"
             onClick={() => {
               const confirmed = window.confirm(
                 "Are you sure you want to delete this profile?"
