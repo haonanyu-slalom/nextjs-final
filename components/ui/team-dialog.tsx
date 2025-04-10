@@ -33,10 +33,10 @@ const TeamDialog: React.FC<TeamDialogProps> = ({members, onRemoveMember}) => {
             </DialogHeader>
             {
                 members.map((member) => (
-                    <div className="flex items-center justify-between hover:bg-gray-50 rounded-md p-2">
+                    <div className="flex items-center justify-between hover:bg-gray-50 rounded-md p-2" key={member.id}>
                         <Link
                             href={`/profile/${member.id}`}
-                            key={member.id}
+                            // key={member.id}
                             className="black underline"
                         >
                             {member.name}

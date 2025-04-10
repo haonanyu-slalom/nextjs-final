@@ -172,10 +172,12 @@ export default function DeveloperDirectory() {
                       </Link>
                       <Button
                         onClick={() => toggleMember(dev)}
-                        variant="default"
-                        disabled={isMember(dev.id)}
+                        variant={isMember(dev.id) ? "secondary" : "default"}
                       >
-                        Add to List
+                        {isMember(dev.id)
+                        ? "Remove from List"
+                        : "Add to List"
+                        }
                       </Button>
                     </div>
                   </CardContent>
@@ -262,10 +264,12 @@ export default function DeveloperDirectory() {
                 </Link>
                 <Button
                   onClick={() => toggleMember(dev)}
-                  variant="default"
-                  disabled={isMember(dev.id)}
+                  variant={isMember(dev.id) ? "secondary" : "default"}
                 >
-                  Add to List
+                  {isMember(dev.id)
+                  ? "Remove from List"
+                  : "Add to List"
+                  }
                 </Button>
               </div>
             </CardContent>
