@@ -12,14 +12,14 @@ import mockProfiles from "@/profile-data";
 
 interface ProfileContextProps {
   profiles: Profile[];
-  loadProfiles: () => Profile[];
-  getProfile: (id: number) => Profile | undefined;
+  loadProfiles: () => Promise<Profile[]>;
+  getProfile: (id: number) => Promise<Profile | undefined>;
   editProfile: (
     id: number,
     updatedData: Partial<Profile>
-  ) => Profile | undefined;
-  deleteProfile: (id: number) => void;
-  createProfile: () => number;
+  ) => Promise<Profile | undefined>;
+  deleteProfile: (id: number) => Promise<void>;
+  createProfile: (newProfile: Omit<Profile, 'id'>) => Promise<number>;
 }
 
 const ProfileContext = createContext<ProfileContextProps | undefined>(
@@ -34,10 +34,7 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     setIsMounted(true);
-    const storedProfiles = localStorage.getItem("profiles");
-    if (storedProfiles) {
-      setProfiles(JSON.parse(storedProfiles));
-    }
+
   }, []);
 
   useEffect(() => {
@@ -109,3 +106,4 @@ export const useProfiles = () => {
   }
   return context;
 };
+
