@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Dialog,
   DialogContent,
@@ -10,13 +12,15 @@ import { Profile } from "@/profile-data"
 import { Button } from "@/components/ui/button"
 import React from 'react';
 import Link from "next/link"
+import { X } from "lucide-react"
 
 
 interface TeamDialogProps {
     members: Profile[];
+    onRemoveMember: (memberId: number) => void;
 }
 
-const TeamDialog: React.FC<TeamDialogProps> = ({members}) => {
+const TeamDialog: React.FC<TeamDialogProps> = ({members, onRemoveMember}) => {
     return (
         <Dialog>
         <DialogTrigger asChild>
@@ -29,13 +33,23 @@ const TeamDialog: React.FC<TeamDialogProps> = ({members}) => {
             </DialogHeader>
             {
                 members.map((member) => (
-                    <Link
-                        href={`/profile/${member.id}`}
-                        key={member.id}
-                        className="black underline"
-                    >
-                        {member.name}
-                    </Link>
+                    <div className="flex items-center justify-between hover:bg-gray-50 rounded-md p-2">
+                        <Link
+                            href={`/profile/${member.id}`}
+                            key={member.id}
+                            className="black underline"
+                        >
+                            {member.name}
+                        </Link>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => onRemoveMember(member.id)}
+                            aria-label="Remove member"
+                        >
+                            <X className="h-4 w-4" />
+                        </Button>
+                    </div>
                 ))
             }
         </DialogContent>

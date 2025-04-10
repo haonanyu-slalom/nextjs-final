@@ -15,6 +15,12 @@ import { useRouter } from "next/navigation";
 import { CheckCircle, XCircle } from "lucide-react";
 
 export default function DeveloperDirectory() {
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
   const [search, setSearch] = useState("");
   const [selectedTech, setSelectedTech] = useState<string[]>([]);
   const [selectedExp, setSelectedExp] = useState<string[]>([]);
@@ -26,8 +32,21 @@ export default function DeveloperDirectory() {
   const [requirementText, setRequirementText] = useState("");
   
   const router = useRouter();
-  const { profiles, createProfile, loadProfiles, getProfile } = useProfiles();
+  const { profiles, createProfile } = useProfiles();
   const [members, setMembers] = useState<Profile[]>([]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem("members");
+      if (saved) setMembers(JSON.parse(saved));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (hasMounted) {
+      localStorage.setItem("members", JSON.stringify(members));
+    }
+  }, [members, hasMounted]);
 
   const filteredDevs = profiles.filter((dev) => {
     const nameFiltered = dev.name.toLowerCase().includes(search.toLowerCase());
@@ -67,27 +86,19 @@ export default function DeveloperDirectory() {
   };
 
   const toggleMember = (dev: Profile) => {
-    if (isMember(dev.id)) {
-      setMembers(members.filter(mem => mem.id !== dev.id));
-    } else {
-      setMembers([...members, dev]);
-    };
+    setMembers(prevMembers => {
+      const isExisting = prevMembers.some(member => member.id === dev.id);
+      if (isExisting) {
+        return prevMembers.filter(member => member.id !== dev.id);
+      } else {
+        return [...prevMembers, dev];
+      }
+    });
   };
 
   const isMember = (devId: number) => {
     return members.some(member => member.id === devId);
   }
-
-  useEffect(() => {
-    const savedMembers = localStorage.getItem("members");
-    if(savedMembers) {
-      setMembers(JSON.parse(savedMembers))
-    }
-  }, [])
-
-  useEffect(() => {
-    localStorage.setItem("members", JSON.stringify(members));
-  }, [members]);
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -106,7 +117,12 @@ export default function DeveloperDirectory() {
             </Button>
           </div>
 
-          <TeamDialog members={members}></TeamDialog>
+          <TeamDialog 
+            members={members}
+            onRemoveMember={(memberId) => {
+              setMembers(prev => prev.filter(m => m.id !== memberId))
+            }}
+          />
         </div>
 
         {recommended.length > 0 && (
@@ -156,12 +172,10 @@ export default function DeveloperDirectory() {
                       </Link>
                       <Button
                         onClick={() => toggleMember(dev)}
-                        variant={isMember(dev.id) ? "secondary" : "default"}
+                        variant="default"
+                        disabled={isMember(dev.id)}
                       >
-                        {isMember(dev.id) 
-                        ? (<>Remove from List</>)
-                        : (<>Add to List</>)
-                        }
+                        Add to List
                       </Button>
                     </div>
                   </CardContent>
@@ -248,12 +262,10 @@ export default function DeveloperDirectory() {
                 </Link>
                 <Button
                   onClick={() => toggleMember(dev)}
-                  variant={isMember(dev.id) ? "secondary" : "default"}
+                  variant="default"
+                  disabled={isMember(dev.id)}
                 >
-                  {isMember(dev.id) 
-                  ? (<>Remove from List</>)
-                  : (<>Add to List</>)
-                  }
+                  Add to List
                 </Button>
               </div>
             </CardContent>
