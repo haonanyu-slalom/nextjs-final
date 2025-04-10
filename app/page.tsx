@@ -61,7 +61,7 @@ export default function DeveloperDirectory() {
         exp === "Junior"
           ? dev.experience <= 2
           : exp === "Mid"
-          ? dev.experience <= 6
+          ? dev.experience > 2 && dev.experience <= 6
           : dev.experience > 6
       );
     const avFiltered =

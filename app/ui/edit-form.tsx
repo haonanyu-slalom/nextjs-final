@@ -42,8 +42,8 @@ export default function ProfileForm({ id }: { id: string }) {
     notFound();
   }
 
-  function handleDeleteProfile(): void {
-    deleteProfile(Number(id));
+  async function handleDeleteProfile(): Promise<void> {
+    await deleteProfile(Number(id));
     router.push("/");
   }
 

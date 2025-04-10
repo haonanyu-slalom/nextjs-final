@@ -1,6 +1,6 @@
 'use server';
 
-import { Profile } from '@/profile-data';
+import { Profile, techStacks } from '@/profile-data';
 import OpenAI from 'openai';
 
 
@@ -70,5 +70,29 @@ ${JSON.stringify(profiles)}
     const reply = JSON.parse(response.output_text);
     console.log(reply.ids)
   return reply.ids;
+}
+
+
+
+export async function getSummary(profile: Profile) {
+    const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY!,
+      });
+
+const response = await openai.responses.create({
+    model: "gpt-4o-mini",
+    input: `
+You are a professional profile writer. Given the following engineer profile object, write an attractive and engaging summary paragraph suitable for a portfolio website or developer directory. Use a friendly yet professional tone.
+
+Enrich the summary by analyzing the GitHub profile at the provided githubLink — highlight key projects, contributions, programming languages, or technologies if available. Avoid listing everything; instead, pick the most impressive or unique aspects that match the engineer’s profile.
+
+Here is the engineer profile object in json format:
+
+${JSON.stringify(profile)}
+
+Write a compelling and concise summary in one paragraph, around 80–120 words.
+`,
+});
+  return response.output_text;
 }
 

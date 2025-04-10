@@ -1,7 +1,9 @@
 // Tailwind-based Developer Profile Page UI
 "use client";
+import { getSummary } from "@/app/actions/chat";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useProfiles } from "@/lib/profilesContext";
+import ReactMarkdown from "react-markdown";
 import {
   CheckCircle,
   Code,
@@ -11,17 +13,28 @@ import {
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { use } from "react";
+import { use, useState } from "react";
 
 export default function DeveloperProfile({
   params: paramsPromise,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const params = use(paramsPromise); // 👈 unwrap the Promise
+  const params = use(paramsPromise);
+  const [summary, setSummary] = useState("");
+  const [loading, setLoading] = useState(false);
   const id = Number(params.id);
   const { profiles, loadProfiles, getProfile } = useProfiles();
   const profile = getProfile(Number(id));
+
+  const summarizeProfile = async () => {
+    setLoading(true); // Start loading
+    setSummary(""); // Clear any previous summary
+    const profileSummary = await getSummary(profile!);
+    setSummary(profileSummary); // Update the state with the summary text
+    setLoading(false); // Stop loading
+  };
+
   const level =
     profile!.experience <= 2
       ? "Junior"
@@ -126,7 +139,28 @@ export default function DeveloperProfile({
           >
             Edit
           </Link>
+          <button
+            onClick={summarizeProfile} // define your function to summarize the profile
+            className="ml-auto px-4 py-2 text-white bg-blue-500 rounded-full hover:bg-blue-600"
+          >
+            Summarize Profile
+          </button>
         </div>
+
+        {loading && (
+          <div className="mt-6 flex items-center justify-center space-x-2">
+            <div className="w-5 h-5 border-t-2 border-blue-500 border-solid rounded-full animate-spin"></div>
+            <span>Generating summary...</span>
+          </div>
+        )}
+
+        {/* Display the summary text if available */}
+        {!loading && summary && (
+          <div className="mt-6">
+            <h3 className="text-xl font-semibold mb-2">Profile Summary</h3>
+            <ReactMarkdown>{summary}</ReactMarkdown>
+          </div>
+        )}
       </div>
     </div>
   );
