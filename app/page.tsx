@@ -116,7 +116,8 @@ export default function DeveloperDirectory() {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="mb-4">
-        <h1 className="text-2xl font-bold mb-2">Dev Directory</h1>
+        <h1 className="text-2xl font-bold mb-2">Engineer Pool</h1>
+        <br></br>
         <div className="flex items-center justify-between mb-6">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <textarea
@@ -218,6 +219,7 @@ export default function DeveloperDirectory() {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full sm:w-64"
         />
+        <br></br>
       </div>
 
       <div className="flex items-center justify-between mb-6">
