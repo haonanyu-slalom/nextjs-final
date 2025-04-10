@@ -85,8 +85,10 @@ export default function DeveloperDirectory() {
     let matchedIds;
     try {
       matchedIds = await getBestMatch(profiles, requirementText);
-      const Ids = matchedIds.split(",");
-      const matchedProfiles = Ids.map((id) => getProfile(Number(id)));
+      if (matchedIds.length == 0) {
+        throw new Error("no results found");
+      }
+      const matchedProfiles = matchedIds.map((id) => getProfile(Number(id)));
       setRecommended(matchedProfiles);
       setLoadingAI(false);
     } catch (err) {
@@ -156,6 +158,11 @@ export default function DeveloperDirectory() {
                       />
                       <div>
                         <h2 className="text-lg font-semibold">{dev.name}</h2>
+                        {dev.availability ? (
+                          <CheckCircle className="h-4 w-4 text-green-500 mt-2"></CheckCircle>
+                        ) : (
+                          <XCircle className="h-4 w-4 text-red-500 mt-2"></XCircle>
+                        )}
                         <p className="text-sm text-gray-600">
                           {dev.experience} year(s) experience
                         </p>
@@ -197,8 +204,8 @@ export default function DeveloperDirectory() {
 
         {havingAIError && (
           <div className="text-red-600 bg-red-100 p-4 rounded mt-4">
-            🚨 Oops! Something went wrong with AI response. Please check your
-            requirement text! And make sure you have set up the OPENAI API KEY!
+            🚨 Oops! We don't find any match. Please check your requirement
+            text! And make sure you have set up the OPENAI API KEY!
           </div>
         )}
       </header>
