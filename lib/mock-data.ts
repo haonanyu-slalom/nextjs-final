@@ -1,24 +1,4 @@
-import { Url } from "next/dist/shared/lib/router/router";
-
-export type Profile = {
-    id: number;
-    name: string;
-    avatar:  string;
-    email: string;
-    description: string;
-    techStacks: string[];
-    experience: number;
-    availability: boolean;
-    project: Project | null;
-    githubLink: Url;
-}
-
-type Project = {
-    title: string;
-    description: string;
-}
-
-const mockProfiles: Profile[] = [
+export const profiles = [
     {
         id: 1,
         name: 'Alice Johnson',
@@ -259,14 +239,4 @@ const mockProfiles: Profile[] = [
         project: { title: 'Project A', description: 'Insurance Portal for Company A'},
         githubLink: 'https://github.com/haonanyu-slalom'
     }
-];
-
-export default mockProfiles;
-
-export const techStacks: string[] = Array.from(
-    new Set(mockProfiles.flatMap(profile => profile.techStacks))
-);
-
-export const experienceLevel: string[] = ['Junior', 'Mid', 'Senior'];
-
-export const availability: string[] = ['Occupied', 'Available'];
+]

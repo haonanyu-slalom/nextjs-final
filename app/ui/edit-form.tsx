@@ -18,8 +18,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
-import { useProfiles } from "@/lib/profilesContext";
+// import { useProfiles } from "@/lib/profilesContext";
+import { getProfile, editProfile, deleteProfile } from "@/lib/data";
 import { notFound, redirect, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { Profile } from "@/profile-data";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
@@ -36,20 +39,30 @@ const formSchema = z.object({
 
 export default function ProfileForm({ id }: { id: string }) {
   const router = useRouter();
-  const { getProfile, editProfile, deleteProfile } = useProfiles();
-  const profile = getProfile(Number(id));
-  if (!profile) {
-    notFound();
-  }
+  // const { getProfile, editProfile, deleteProfile } = useProfiles();
+
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  useEffect(() => {
+    async function fetchProfile() {
+      const fetchedProfile = await getProfile(id);
+      if (!fetchedProfile) {
+        notFound();
+      }
+      setProfile(fetchedProfile);
+    }
+
+    fetchProfile().catch(console.error);
+  }, [id]);
 
   function handleDeleteProfile(): void {
-    deleteProfile(Number(id));
+    deleteProfile(id);
     router.push("/");
   }
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: profile ? {
       name: profile.name,
       avatar: profile.avatar,
       email: profile.email,
@@ -60,7 +73,7 @@ export default function ProfileForm({ id }: { id: string }) {
       githubLink: profile.githubLink.toString(),
       projectTitle: profile.project?.title,
       projectDescription: profile.project?.description,
-    },
+    } : {},
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -75,7 +88,7 @@ export default function ProfileForm({ id }: { id: string }) {
             }
           : null,
     };
-    editProfile(Number(id), profile);
+    editProfile(id, profile);
     redirect("/profile/" + id);
   }
 

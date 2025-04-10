@@ -1,27 +1,27 @@
 // Tailwind-based Developer Profile Page UI
 "use client";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useProfiles } from "@/lib/profilesContext";
+// import { useProfiles } from "@/lib/profilesContext";
 import {
   CheckCircle,
   Code,
   ExternalLink,
-  Github,
   Mail,
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { use } from "react";
+import { loadProfiles, getProfile } from "@/lib/data";
 
-export default function DeveloperProfile({
+export default async function DeveloperProfile({
   params: paramsPromise,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const params = use(paramsPromise); // 👈 unwrap the Promise
-  const id = Number(params.id);
-  const { profiles, loadProfiles, getProfile } = useProfiles();
-  const profile = getProfile(Number(id));
+  const id = params.id;
+  // const { profiles, loadProfiles, getProfile } = useProfiles();
+  const profile = await getProfile(id);
   const level =
     profile!.experience <= 2
       ? "Junior"

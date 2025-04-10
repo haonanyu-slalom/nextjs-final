@@ -10,11 +10,12 @@ import Link from "next/link";
 import { Profile } from "@/profile-data";
 import MultiSelectDropdown from "@/components/ui/multiselect";
 import TeamDialog from "@/components/ui/team-dialog";
-import { useProfiles } from "@/lib/profilesContext";
+// import { useProfiles } from "@/lib/profilesContext";
 import { useRouter } from "next/navigation";
 import { CheckCircle, XCircle } from "lucide-react";
+import { loadProfiles, createProfile } from "@/lib/data";
 
-export default function DeveloperDirectory() {
+export default async function DeveloperDirectory() {
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
@@ -32,7 +33,9 @@ export default function DeveloperDirectory() {
   const [requirementText, setRequirementText] = useState("");
   
   const router = useRouter();
-  const { profiles, createProfile } = useProfiles();
+
+  // const { profiles, createProfile } = useProfiles();
+  const profiles = await loadProfiles();
   const [members, setMembers] = useState<Profile[]>([]);
 
   useEffect(() => {
