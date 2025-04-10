@@ -13,6 +13,7 @@ import TeamDialog from "@/components/ui/team-dialog";
 import { useProfiles } from "@/lib/profilesContext";
 import { useRouter } from "next/navigation";
 import { CheckCircle, XCircle } from "lucide-react";
+import { getBestMatch } from "./actions/chat";
 
 export default function DeveloperDirectory() {
   const [hasMounted, setHasMounted] = useState(false);
@@ -29,14 +30,15 @@ export default function DeveloperDirectory() {
   );
   const [recommended, setRecommended] = useState<any[]>([]);
   const [loadingAI, setLoadingAI] = useState(false);
+  const [havingAIError, setHavingAIError] = useState(false);
   const [requirementText, setRequirementText] = useState("");
-  
+
   const router = useRouter();
-  const { profiles, createProfile } = useProfiles();
+  const { profiles, createProfile, getProfile } = useProfiles();
   const [members, setMembers] = useState<Profile[]>([]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const saved = localStorage.getItem("members");
       if (saved) setMembers(JSON.parse(saved));
     }
@@ -76,20 +78,31 @@ export default function DeveloperDirectory() {
   }
 
   const handleAIRecommendation = async () => {
+    setHavingAIError(false);
     setLoadingAI(true);
-    // Simulate async AI call using requirementText
-    setTimeout(() => {
-      console.log("User requirement:", requirementText);
-      setRecommended([profiles[0]]);
+
+    console.log("User requirement:", requirementText);
+    let matchedIds;
+    try {
+      matchedIds = await getBestMatch(profiles, requirementText);
+      if (matchedIds.length == 0) {
+        throw new Error("no results found");
+      }
+      const matchedProfiles = matchedIds.map((id) => getProfile(Number(id)));
+      setRecommended(matchedProfiles);
       setLoadingAI(false);
-    }, 1000);
+    } catch (err) {
+      setLoadingAI(false);
+      setRecommended([]);
+      setHavingAIError(true);
+    }
   };
 
   const toggleMember = (dev: Profile) => {
-    setMembers(prevMembers => {
-      const isExisting = prevMembers.some(member => member.id === dev.id);
+    setMembers((prevMembers) => {
+      const isExisting = prevMembers.some((member) => member.id === dev.id);
       if (isExisting) {
-        return prevMembers.filter(member => member.id !== dev.id);
+        return prevMembers.filter((member) => member.id !== dev.id);
       } else {
         return [...prevMembers, dev];
       }
@@ -97,8 +110,8 @@ export default function DeveloperDirectory() {
   };
 
   const isMember = (devId: number) => {
-    return members.some(member => member.id === devId);
-  }
+    return members.some((member) => member.id === devId);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -117,10 +130,10 @@ export default function DeveloperDirectory() {
             </Button>
           </div>
 
-          <TeamDialog 
+          <TeamDialog
             members={members}
             onRemoveMember={(memberId) => {
-              setMembers(prev => prev.filter(m => m.id !== memberId))
+              setMembers((prev) => prev.filter((m) => m.id !== memberId));
             }}
           />
         </div>
@@ -145,6 +158,11 @@ export default function DeveloperDirectory() {
                       />
                       <div>
                         <h2 className="text-lg font-semibold">{dev.name}</h2>
+                        {dev.availability ? (
+                          <CheckCircle className="h-4 w-4 text-green-500 mt-2"></CheckCircle>
+                        ) : (
+                          <XCircle className="h-4 w-4 text-red-500 mt-2"></XCircle>
+                        )}
                         <p className="text-sm text-gray-600">
                           {dev.experience} year(s) experience
                         </p>
@@ -174,16 +192,20 @@ export default function DeveloperDirectory() {
                         onClick={() => toggleMember(dev)}
                         variant={isMember(dev.id) ? "secondary" : "default"}
                       >
-                        {isMember(dev.id)
-                        ? "Remove from List"
-                        : "Add to List"
-                        }
+                        {isMember(dev.id) ? "Remove from List" : "Add to List"}
                       </Button>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
+          </div>
+        )}
+
+        {havingAIError && (
+          <div className="text-red-600 bg-red-100 p-4 rounded mt-4">
+            🚨 Oops! We don't find any match. Please check your requirement
+            text! And make sure you have set up the OPENAI API KEY!
           </div>
         )}
       </header>
@@ -266,10 +288,7 @@ export default function DeveloperDirectory() {
                   onClick={() => toggleMember(dev)}
                   variant={isMember(dev.id) ? "secondary" : "default"}
                 >
-                  {isMember(dev.id)
-                  ? "Remove from List"
-                  : "Add to List"
-                  }
+                  {isMember(dev.id) ? "Remove from List" : "Add to List"}
                 </Button>
               </div>
             </CardContent>
