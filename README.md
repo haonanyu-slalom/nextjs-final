@@ -2,6 +2,9 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+To use the AI features:
+you need to copy the .env.example file and rename it as ".env.local" and write your OPENAI APIKEY !
+
 First, run the development server:
 
 ```bash
