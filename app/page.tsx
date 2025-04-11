@@ -12,7 +12,7 @@ import MultiSelectDropdown from "@/components/ui/multiselect";
 import TeamDialog from "@/components/ui/team-dialog";
 import { useProfiles } from "@/lib/profilesContext";
 import { useRouter } from "next/navigation";
-import { CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle, Filter, XCircle } from "lucide-react";
 import { getBestMatch } from "./actions/chat";
 
 export default function DeveloperDirectory() {
@@ -54,7 +54,7 @@ export default function DeveloperDirectory() {
     const nameFiltered = dev.name.toLowerCase().includes(search.toLowerCase());
     const techFiltered =
       selectedTech.length === 0 ||
-      selectedTech.some((tech) => dev.techStacks.includes(tech));
+      selectedTech.every((tech) => dev.techStacks.includes(tech));
     const expFiltered =
       selectedExp.length === 0 ||
       selectedExp.some((exp) =>
@@ -76,6 +76,11 @@ export default function DeveloperDirectory() {
     const id = createProfile();
     router.push("/profile/" + id + "/edit");
   }
+
+  const getDropdownTitle = (selected: string[], title: string) => {
+    if (selected.length === 0) return title;
+    return `${title} (${selected.length})`;
+  };
 
   const handleAIRecommendation = async () => {
     setHavingAIError(false);
@@ -113,6 +118,14 @@ export default function DeveloperDirectory() {
     return members.some((member) => member.id === devId);
   };
 
+  const handleInput = (e: any) => {
+    const textarea = e.target;
+    textarea.style.height = "auto";
+    const newHeight = Math.min(textarea.scrollHeight, 192); // 192px = max-h-48
+    textarea.style.height = `${newHeight}px`;
+    setRequirementText(textarea.value);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <header className="mb-4">
@@ -123,8 +136,8 @@ export default function DeveloperDirectory() {
             <textarea
               placeholder="Describe your developer needs..."
               value={requirementText}
-              onChange={(e) => setRequirementText(e.target.value)}
-              className="w-full sm:w-[40rem] h-24 p-2 border border-gray-300 rounded-lg shadow-sm"
+              onInput={handleInput}
+              className="w-full sm:w-[40rem] max-h-48 overflow-auto resize-none p-2 border border-gray-300 rounded-lg shadow-sm"
             />
             <Button onClick={handleAIRecommendation} disabled={loadingAI}>
               {loadingAI ? "Recommending..." : "Recommend Developers"}
@@ -158,12 +171,14 @@ export default function DeveloperDirectory() {
                         className="w-14 h-14 rounded-full object-cover"
                       />
                       <div>
-                        <h2 className="text-lg font-semibold">{dev.name}</h2>
-                        {dev.availability ? (
-                          <CheckCircle className="h-4 w-4 text-green-500 mt-2"></CheckCircle>
-                        ) : (
-                          <XCircle className="h-4 w-4 text-red-500 mt-2"></XCircle>
-                        )}
+                        <div className="flex gap-4">
+                          <h2 className="text-lg font-semibold">{dev.name}</h2>
+                          {dev.availability ? (
+                            <CheckCircle className="h-4 w-4 text-green-500 mt-2"></CheckCircle>
+                          ) : (
+                            <XCircle className="h-4 w-4 text-red-500 mt-2"></XCircle>
+                          )}
+                        </div>
                         <p className="text-sm text-gray-600">
                           {dev.experience} year(s) experience
                         </p>
@@ -173,7 +188,7 @@ export default function DeveloperDirectory() {
                       {dev.description}
                     </p>
                     <div className="mt-2 flex flex-wrap gap-1">
-                      {dev.techStacks.map((tech: string) => (
+                      {dev.techStacks.map((tech) => (
                         <span
                           key={tech}
                           className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full"
@@ -193,7 +208,7 @@ export default function DeveloperDirectory() {
                         onClick={() => toggleMember(dev)}
                         variant={isMember(dev.id) ? "secondary" : "default"}
                       >
-                        {isMember(dev.id) ? "Remove from List" : "Add to List"}
+                        {isMember(dev.id) ? "Remove from Team" : "Add to Team"}
                       </Button>
                     </div>
                   </CardContent>
@@ -210,38 +225,48 @@ export default function DeveloperDirectory() {
           </div>
         )}
       </header>
+      <div className="flex items-center justify-between mb-6 space-x-6">
+        {/* Search Bar */}
+        <div className="flex-shrink-0 w-1/3 sm:w-64">
+          <Input
+            type="text"
+            placeholder="Search developers..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full rounded-lg border border-gray-300 px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+          />
+        </div>
 
-      <div className="mb-2">
-        <Input
-          type="text"
-          placeholder="Search developers..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full sm:w-64"
-        />
-        <br></br>
-      </div>
+        {/* Filters Section */}
+        <div className="flex items-center space-x-6">
+          {/* Filters Title */}
+          <div className="flex items-center space-x-2 text-gray-700 font-semibold text-lg">
+            <Filter size={18} className="text-gray-500" />
+            <h6 className="tracking-wide">Filters</h6>
+          </div>
 
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex space-x-4">
+          {/* MultiSelect Dropdowns */}
           <MultiSelectDropdown
-            title="Tech Stack"
+            title={getDropdownTitle(selectedTech, "Tech Stack")}
             selectedOptions={selectedTech}
             onSelectChange={setSelectedTech}
           />
           <MultiSelectDropdown
-            title="Experience Level"
+            title={getDropdownTitle(selectedExp, "Experience Level")}
             selectedOptions={selectedExp}
             onSelectChange={setSelectedExp}
           />
           <MultiSelectDropdown
-            title="Availability"
+            title={getDropdownTitle(selectedAvailability, "Availability")}
             selectedOptions={selectedAvailability}
             onSelectChange={setSelectedAvailability}
           />
         </div>
 
-        <Button onClick={handleCreateProfile}>Add Profile</Button>
+        {/* Add Profile Button */}
+        <div className="flex-shrink-0">
+          <Button onClick={handleCreateProfile}>Add Profile</Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -290,7 +315,7 @@ export default function DeveloperDirectory() {
                   onClick={() => toggleMember(dev)}
                   variant={isMember(dev.id) ? "secondary" : "default"}
                 >
-                  {isMember(dev.id) ? "Remove from List" : "Add to List"}
+                  {isMember(dev.id) ? "Remove from Team" : "Add to Team"}
                 </Button>
               </div>
             </CardContent>
